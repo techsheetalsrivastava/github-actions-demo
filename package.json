@@ -1,13 +1,16 @@
 {
-  "name": "github-actions-demo",
+  "name": "Opspulse-Devops",
   "version": "1.0.0",
-  "description": "GitHub Actions Demo",
+  "description": "Opspulse-Devops",
   "main": "src/app.js",
   "scripts": {
-    "start": "node src/app.js",
-    "build": "mkdir -p dist && echo \"Build completed successfully\" > dist/build.txt",
-    "test": "echo \"Tests passed successfully\""
-  },
+  "start": "node src/app.js",
+  "build": "mkdir -p dist && cp src/app.js dist/app.js && echo \"Build Successful\" > dist/build.txt",
+  "test": "echo \"All Tests Passed\""
+},
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }

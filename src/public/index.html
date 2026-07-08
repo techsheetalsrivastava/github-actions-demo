@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpsPulse - DevOps Utility Service</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1> OpsPulse</h1>
+    <p class="subtitle">DevOps Utility Service</p>
+
+    <div class="card">
+        <h3>Application Status</h3>
+
+        <p><strong>Status:</strong> <span id="status">Loading...</span></p>
+        <p><strong>Version:</strong> <span id="version">Loading...</span></p>
+        <p><strong>Environment:</strong> <span id="environment">Loading...</span></p>
+        <p><strong>Hostname:</strong> <span id="hostname">Loading...</span></p>
+        <p><strong>Server Time:</strong> <span id="time">Loading...</span></p>
+
+    </div>
+
+</div>
+
+<script>
+fetch('/status')
+.then(response => response.json())
+.then(data => {
+
+document.getElementById("status").innerText = data.status;
+document.getElementById("version").innerText = data.version;
+document.getElementById("environment").innerText = data.environment;
+document.getElementById("hostname").innerText = data.hostname;
+document.getElementById("time").innerText = data.serverTime;
+
+});
+</script>
+
+</body>
+</html>
