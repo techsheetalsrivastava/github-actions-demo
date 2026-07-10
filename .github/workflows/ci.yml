@@ -1,5 +1,9 @@
 name: GitHub Actions CI Pipeline
 
+permissions:
+  contents: read
+  packages: read
+
 on:
   push:
     branches:
@@ -97,5 +101,32 @@ jobs:
 
       - name: Run Tests
         run: npm test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Deploy to Azure VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AZURE_VM_HOST }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_SSH_KEY }}
+
+          script: |
+            docker pull ghcr.io/${{ github.repository_owner }}/opspulse:latest
+
+            docker stop opspulse || true
+            docker rm -f opspulse || true
+
+            docker run -d \
+              --name opspulse \
+              -p 3000:3000 \
+              ghcr.io/${{ github.repository_owner }}/opspulse:latest
+
+            sleep 10
+
+            curl --fail http://localhost:3000/status
 
   
