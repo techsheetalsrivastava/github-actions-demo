@@ -103,29 +103,33 @@ jobs:
         run: npm test
 
   deploy:
-  runs-on: ubuntu-latest
-  needs: test
+    runs-on: ubuntu-latest
+    needs: test
 
-  steps:
-    - name: Deploy to Azure VM
-      uses: appleboy/ssh-action@v1.2.0
-      with:
-        host: ${{ secrets.AZURE_VM_HOST }}
-        username: ${{ secrets.AZURE_VM_USER }}
-        key: ${{ secrets.AZURE_VM_SSH_KEY }}
+    steps:
+      - name: Deploy to Azure VM
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.AZURE_VM_HOST }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_SSH_KEY }}
 
-        script: |
-          echo "${{ secrets.GHCR_VM }}" | docker login ghcr.io -u techsheetalsrivastava --password-stdin
+          script: |
+            echo "${{ secrets.GHCR_VM }}" | docker login ghcr.io -u techsheetalsrivastava --password-stdin
 
-          docker pull ghcr.io/techsheetalsrivastava/opspulse:latest
+            docker pull ghcr.io/${{ github.repository_owner }}/opspulse:latest
 
-          docker stop opspulse || true
-          docker rm opspulse || true
+            docker stop opspulse || true
+            docker rm opspulse || true
 
-          docker run -d \
-            --name opspulse \
-            --restart unless-stopped \
-            -p 3000:3000 \
-            ghcr.io/techsheetalsrivastava/opspulse:latest
+            docker run -d \
+              --name opspulse \
+              --restart unless-stopped \
+              -p 3000:3000 \
+              ghcr.io/${{ github.repository_owner }}/opspulse:latest
 
-          docker image prune -f
+            sleep 10
+
+            docker ps
+
+            curl http://localhost:3000
