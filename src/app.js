@@ -102,3 +102,7 @@ app.get("/status", (req, res) => {
     });
 
 });
+
+app.listen(PORT, () => {
+    console.log(`OpsPulse running on port ${PORT}`);
+});
