@@ -6,6 +6,11 @@ const config = require("./config/config");
 const app = express();
 const PORT = config.port;
 
+const express = require("express");
+const os = require("os");
+const path = require("path");
+const config = require("./config/config");
+const { exec } = require("child_process");
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -53,24 +58,52 @@ app.get("/ping", (req, res) => {
 
 app.get("/status", (req, res) => {
 
-    res.json({
+    exec("docker ps -q | wc -l", (err, stdout) => {
 
-        application: config.application,
+        const totalMemory = (os.totalmem() / (1024 * 1024 * 1024)).toFixed(2);
 
-        status: "UP",
+        const freeMemory = (os.freemem() / (1024 * 1024 * 1024)).toFixed(2);
 
-        version: config.version,
+        const usedMemory = (totalMemory - freeMemory).toFixed(2);
 
-        environment: config.environment,
+        const memoryUsage = (
+            (usedMemory / totalMemory) * 100
+        ).toFixed(1);
 
-        hostname: os.hostname(),
+        const uptime = Math.floor(os.uptime() / 60);
 
-        serverTime: new Date()
+        res.json({
+
+            application: config.application,
+
+            status: "UP",
+
+            version: config.version,
+
+            environment: config.environment,
+
+            hostname: os.hostname(),
+
+            serverTime: new Date(),
+
+            metrics: {
+
+                totalMemory: `${totalMemory} GB`,
+
+                usedMemory: `${usedMemory} GB`,
+
+                freeMemory: `${freeMemory} GB`,
+
+                memoryUsage: `${memoryUsage}%`,
+
+                uptime: `${uptime} mins`,
+
+                runningContainers: stdout.trim()
+
+            }
+
+        });
 
     });
 
-});
-
-app.listen(PORT, () => {
-    console.log(`OpsPulse running on port ${PORT}`);
 });
