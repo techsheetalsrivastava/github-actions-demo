@@ -185,3 +185,21 @@ jobs:
 
           script: |
             docker image prune -f
+
+      - name: Deployment Summary
+        run: |
+          echo "# OpsPulse Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Application Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **Application:** $APP_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** $ENVIRONMENT" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Docker Image" >> $GITHUB_STEP_SUMMARY
+          echo "\`ghcr.io/${{ github.repository_owner }}/opspulse:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Deployment Target" >> $GITHUB_STEP_SUMMARY
+          echo "- Azure Virtual Machine" >> $GITHUB_STEP_SUMMARY
+          echo "- Host: ${{ secrets.AZURE_VM_HOST }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Deployment completed successfully." >> $GITHUB_STEP_SUMMARY        
